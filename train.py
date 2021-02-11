@@ -10,6 +10,9 @@ from samplers import CategoriesSampler
 from convnet import Convnet
 from utils import pprint, set_gpu, ensure_path, Averager, Timer, count_acc, euclidean_metric
 
+from torch.utils.tensorboard import SummaryWriter
+tensorboard = SummaryWriter()
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -93,6 +96,9 @@ if __name__ == '__main__':
 
         tl = tl.item()
         ta = ta.item()
+        
+        tensorboard.add_scalar("Train Loss", tl, epoch)
+        tensorboard.add_scalar("Train Accuracy", ta, epoch)
 
         model.eval()
 
@@ -121,6 +127,9 @@ if __name__ == '__main__':
 
         vl = vl.item()
         va = va.item()
+        tensorboard.add_scalar("Validation Loss", vl, epoch)
+        tensorboard.add_scalar("Validation Accuracy", va, epoch)
+        
         print('epoch {}, val, loss={:.4f} acc={:.4f}'.format(epoch, vl, va))
 
         if va > trlog['max_acc']:
